@@ -1,0 +1,442 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ===== USER MODELS =====
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  password        String
+  phone           String?
+  avatar          String?   // URL to avatar image
+  bio             String?
+  
+  // Account details
+  dateOfBirth     DateTime?
+  gender          String?
+  address         String?
+  city            String?
+  state           String?
+  zipCode         String?
+  country         String?
+  
+  // Preferences
+  language        String    @default("en")
+  timezone        String    @default("America/New_York")
+  notifications   Json      @default("{\"email\": true, \"sms\": false}")
+  
+  // Account status
+  isVerified      Boolean   @default(false)
+  verificationToken String?
+  emailVerifiedAt DateTime?
+  
+  status          String    @default("active") // active, suspended, deleted
+  role            String    @default("patient") // patient, therapist, admin
+  
+  // Relations
+  therapistProfile Therapist?
+  appointments    Appointment[]
+  sessions        Session[]
+  reviews         Review[]
+  insurance       Insurance?
+  medicalHistory  MedicalHistory?
+  payments        Payment[]
+  notes           TherapyNote[]
+  prescriptions   Prescription[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([email])
+  @@index([status])
+}
+
+model Therapist {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Professional info
+  licenses        String[]  // License numbers
+  specialties     String[]  // anxiety, depression, trauma, relationships, etc.
+  bio             String    @db.Text
+  profileImage    String?
+  
+  // Credentials
+  degrees         String[]  // Psychology PhD, MSW, LCSW, etc.
+  yearsOfExperience Int
+  certifications  String[]
+  
+  // Availability
+  availability    Json      // {"monday": [{"start": "09:00", "end": "17:00"}]}
+  timeZone        String    @default("America/New_York")
+  
+  // Pricing
+  hourlyRate      Float
+  acceptedInsurance String[]
+  
+  // Rating & Reviews
+  rating          Float     @default(5.0)
+  totalReviews    Int       @default(0)
+  responseTime    Int       @default(24) // hours
+  
+  // Status
+  isVerified      Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  
+  // Relations
+  appointments    Appointment[]
+  sessions        Session[]
+  reviews         Review[]
+  notes           TherapyNote[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([specialties])
+  @@index([isVerified])
+  @@index([isActive])
+}
+
+// ===== APPOINTMENT & SESSION MODELS =====
+
+model Appointment {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  therapistId     String
+  therapist       Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  
+  // Session details
+  startTime       DateTime
+  duration        Int       @default(60) // minutes
+  type            String    @default("individual") // individual, couple, group
+  
+  // Status tracking
+  status          String    @default("scheduled") // scheduled, in-progress, completed, cancelled, no-show
+  cancellationReason String?
+  
+  // Payment
+  price           Float
+  paymentStatus   String    @default("pending") // pending, completed, refunded
+  
+  // Notes
+  patientNotes    String?   @db.Text
+  therapistNotes  String?   @db.Text
+  
+  // Relations
+  payment         Payment?
+  session         Session?
+  prescription    Prescription?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([therapistId])
+  @@index([startTime])
+  @@index([status])
+}
+
+model Session {
+  id              String    @id @default(cuid())
+  appointmentId   String    @unique
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  
+  // Session details
+  recordingUrl    String?
+  recordingDuration Int?     // seconds
+  moodBefore      String?   // 1-10 or emoji
+  moodAfter       String?
+  
+  // Session notes
+  agenda          String?   @db.Text
+  keyPoints       String[]
+  homework        String?   @db.Text
+  nextSessionDate DateTime?
+  
+  // Follow-up
+  followUpRequired Boolean  @default(false)
+  followUpDate    DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ===== PAYMENT MODELS =====
+
+model Payment {
+  id              String    @id @default(cuid())
+  appointmentId   String    @unique
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Payment details
+  amount          Float
+  currency        String    @default("USD")
+  status          String    @default("pending") // pending, completed, failed, refunded
+  
+  // Stripe integration
+  stripeSessionId String?   @unique
+  stripePaymentIntentId String?
+  
+  // Insurance
+  insuranceCovered Float?
+  patientResponsibility Float?
+  
+  // Metadata
+  description     String?
+  metadata        Json?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+}
+
+// ===== REVIEW & RATING =====
+
+model Review {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  therapistId     String
+  therapist       Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  
+  // Rating
+  rating          Int       @default(5) // 1-5
+  title           String?
+  comment         String?   @db.Text
+  
+  // Tags
+  tags            String[]  // helpful, knowledgeable, caring, etc.
+  
+  // Moderation
+  isApproved      Boolean   @default(true)
+  isHelpful       Int       @default(0)
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([therapistId])
+  @@index([userId])
+}
+
+// ===== MEDICAL MODELS =====
+
+model Insurance {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Insurance details
+  provider        String
+  memberId        String
+  groupNumber     String?
+  planName        String?
+  
+  // Coverage
+  copay           Float?
+  deductible      Float?
+  outOfPocketMax  Float?
+  deductibleMet   Float    @default(0)
+  
+  // Status
+  isActive        Boolean   @default(true)
+  expiryDate      DateTime?
+  
+  // Verification
+  verifiedAt      DateTime?
+  verifiedBy      String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model MedicalHistory {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Medical history
+  conditions      String[]  // anxiety, depression, bipolar, etc.
+  medications     String[]
+  allergies       String[]
+  
+  // Mental health history
+  previousTherapy Boolean  @default(false)
+  previousTherapyNotes String? @db.Text
+  suicidalHistory Boolean  @default(false)
+  emergencyContact String?
+  emergencyPhone  String?
+  
+  // Goals
+  treatmentGoals  String[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model TherapyNote {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  therapistId     String
+  therapist       Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  
+  // Note content
+  content         String    @db.Text
+  type            String    @default("session") // session, intake, assessment, treatment-plan
+  
+  // Visibility
+  isSharedWithPatient Boolean @default(true)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Prescription {
+  id              String    @id @default(cuid())
+  appointmentId   String    @unique
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Medication details
+  medication      String
+  dosage          String    // 500mg, 10mg, etc.
+  frequency       String    // once daily, twice daily, etc.
+  quantity        Int
+  refills         Int
+  
+  // Status
+  status          String    @default("pending") // pending, filled, completed
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ===== CONTENT MODELS =====
+
+model Article {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  excerpt         String
+  content         String    @db.Text
+  
+  // Metadata
+  category        String    // anxiety, depression, wellness, relationships, etc.
+  author          String
+  featured        Boolean   @default(false)
+  
+  // SEO
+  metaDescription String?
+  keywords        String[]
+  
+  // Status
+  published       Boolean   @default(false)
+  publishedAt     DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([category])
+  @@index([published])
+}
+
+model Resource {
+  id              String    @id @default(cuid())
+  title           String
+  description     String    @db.Text
+  type            String    // exercise, video, article, crisis-resource
+  url             String?
+  content         String?   @db.Text
+  
+  // Metadata
+  category        String
+  tags            String[]
+  difficulty      String?   // beginner, intermediate, advanced
+  duration        Int?      // minutes
+  
+  // Status
+  isActive        Boolean   @default(true)
+  featured        Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([category])
+  @@index([isActive])
+}
+
+// ===== ADMIN/SUPPORT MODELS =====
+
+model ContactMessage {
+  id              String    @id @default(cuid())
+  name            String
+  email           String
+  subject         String
+  message         String    @db.Text
+  
+  // Status
+  status          String    @default("new") // new, read, resolved
+  assignedTo      String?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([status])
+}
+
+model SupportTicket {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation("SupportTickets")
+  
+  title           String
+  description     String    @db.Text
+  category        String    // technical, billing, account, general
+  
+  status          String    @default("open") // open, in-progress, resolved, closed
+  priority        String    @default("normal") // low, normal, high, urgent
+  
+  messages        String[]  @db.Text
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AuditLog {
+  id              String    @id @default(cuid())
+  userId          String?
+  action          String    // login, create, update, delete, payment, etc.
+  resourceType    String    // user, appointment, payment, etc.
+  resourceId      String?
+  changes         Json?     // What was changed
+  ipAddress       String?
+  userAgent       String?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// Extend User with SupportTickets relation
+model User_SupportTickets {
+  id              String    @id @default(cuid())
+  userId          String
+  ticketId        String
+  
+  @@unique([userId, ticketId])
+}

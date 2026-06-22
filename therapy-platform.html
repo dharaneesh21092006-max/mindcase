@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare - Online Therapy & Counseling Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #06b6d4;
+            --primary-dark: #0891b2;
+            --sage: #84cc16;
+            --lavender: #a78bfa;
+            --cream: #f8f6f1;
+            --dark: #1e293b;
+        }
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .animate-slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .animate-slide-in-right {
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        .animate-pulse-soft {
+            animation: pulse-soft 3s ease-in-out infinite;
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .gradient-sage {
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+        }
+
+        .gradient-lavender {
+            background: linear-gradient(135deg, #a78bfa 0%, #9333ea 100%);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #06b6d4;
+            border: 2px solid #06b6d4;
+            padding: 10px 26px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f9fa;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .section-padding {
+            padding: 80px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .section-padding {
+                padding: 50px 20px;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .star {
+            color: #fbbf24;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .badge-primary {
+            background: rgba(6, 182, 212, 0.1);
+            color: #0891b2;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">M</span>
+                </div>
+                <span class="font-bold text-xl text-slate-900 hidden sm:inline">MindCare</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <button onclick="navigateTo('home')" class="text-slate-600 hover:text-slate-900 transition">Home</button>
+                <button onclick="navigateTo('therapists')" class="text-slate-600 hover:text-slate-900 transition">Find Therapist</button>
+                <button onclick="navigateTo('resources')" class="text-slate-600 hover:text-slate-900 transition">Resources</button>
+                <button onclick="navigateTo('pricing')" class="text-slate-600 hover:text-slate-900 transition">Pricing</button>
+                <button onclick="navigateTo('contact')" class="text-slate-600 hover:text-slate-900 transition">Contact</button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleAuthModal()" id="authBtn" class="btn-secondary text-sm">Sign In</button>
+                <button class="md:hidden text-slate-600" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-gray-50">
+            <div class="px-4 py-3 space-y-2">
+                <button onclick="navigateTo('home')" class="block w-full text-left py-2 text-slate-600 hover:text-slate-900">Home</button>
+                <button onclick="navigateTo('therapists')" class="block w-full text-left py-2 text-slate-600 hover:text-slate-900">Find Therapist</button>
+                <button onclick="navigateTo('resources')" class="block w-full text-left py-2 text-slate-600 hover:text-slate-900">Resources</button>
+                <button onclick="navigateTo('pricing')" class="block w-full text-left py-2 text-slate-600 hover:text-slate-900">Pricing</button>
+                <button onclick="navigateTo('contact')" class="block w-full text-left py-2 text-slate-600 hover:text-slate-900">Contact</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="app" class="pt-16">
+
+        <!-- ===== HOME PAGE ===== -->
+        <section id="home-page" class="page-section">
+            <!-- Hero Section -->
+            <div class="relative bg-gradient-to-br from-cyan-50 via-white to-purple-50 min-h-screen flex items-center pt-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="animate-slide-in-left">
+                            <div class="inline-block badge badge-primary">Your Mental Health Matters</div>
+                            <h1 class="text-5xl md:text-6xl font-bold text-slate-900 my-6 leading-tight">
+                                Connect with Licensed Therapists, <span class="gradient-primary bg-clip-text text-transparent">Anytime</span>
+                            </h1>
+                            <p class="text-xl text-slate-600 mb-8 leading-relaxed">
+                                Professional mental health support from the comfort of your home. Meet with certified therapists via secure video sessions.
+                            </p>
+                            <div class="flex gap-4 flex-col sm:flex-row">
+                                <button onclick="navigateTo('therapists')" class="btn-primary">Find a Therapist</button>
+                                <button onclick="navigateTo('contact')" class="btn-secondary">Schedule Demo</button>
+                            </div>
+                            
+                            <!-- Stats -->
+                            <div class="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
+                                <div>
+                                    <div class="text-3xl font-bold text-cyan-600">2500+</div>
+                                    <p class="text-slate-600 text-sm">Licensed Therapists</p>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-bold text-purple-600">50k+</div>
+                                    <p class="text-slate-600 text-sm">Lives Improved</p>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-bold text-green-600">4.9★</div>
+                                    <p class="text-slate-600 text-sm">Avg. Rating</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="animate-slide-in-right hidden md:block">
+                            <div class="relative">
+                                <div class="absolute -inset-4 gradient-primary rounded-3xl blur-2xl opacity-20"></div>
+                                <div class="relative bg-white rounded-3xl p-8 shadow-2xl">
+                                    <div class="space-y-4">
+                                        <div class="h-3 bg-gray-200 rounded-full w-3/4"></div>
+                                        <div class="h-3 bg-gray-200 rounded-full w-full"></div>
+                                        <div class="h-3 bg-gray-200 rounded-full w-2/3"></div>
+                                        <div class="h-20 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl mt-4"></div>
+                                        <div class="space-y-2 mt-6">
+                                            <div class="h-2 bg-gray-100 rounded-full w-full"></div>
+                                            <div class="h-2 bg-gray-100 rounded-full w-3/4"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Choose Us -->
+            <section class="section-padding bg-white">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-slate-900 mb-4">Why Choose MindCare?</h2>
+                        <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                            We're committed to making mental health care accessible, affordable, and effective.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="card-hover p-8 rounded-2xl bg-gradient-to-br from-cyan-50 to-white border border-cyan-100">
+                            <div class="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mb-4">
+                                <span class="text-2xl">🔒</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Secure & Private</h3>
+                            <p class="text-slate-600">HIPAA compliant. Your data is encrypted and protected with bank-level security.</p>
+                        </div>
+
+                        <div class="card-hover p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
+                            <div class="w-12 h-12 bg-gradient-lavender rounded-xl flex items-center justify-center mb-4">
+                                <span class="text-2xl">👨‍⚕️</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Licensed Professionals</h3>
+                            <p class="text-slate-600">All therapists are licensed, verified, and experienced in their specialties.</p>
+                        </div>
+
+                        <div class="card-hover p-8 rounded-2xl bg-gradient-to-br from-green-50 to-white border border-green-100">
+                            <div class="w-12 h-12 bg-gradient-sage rounded-xl flex items-center justify-center mb-4">
+                                <span class="text-2xl">⏰</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Flexible Scheduling</h3>
+                            <p class="text-slate-600">Book sessions at times that work for you. No long waits or complicated scheduling.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section class="section-padding bg-slate-50">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-slate-900 mb-4">How It Works</h2>
+                        <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                            Get professional mental health support in just a few simple steps.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-2xl">1</div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Create Account</h4>
+                            <p class="text-slate-600 text-sm">Sign up and complete your profile in minutes.</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-lavender rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-2xl">2</div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Browse Therapists</h4>
+                            <p class="text-slate-600 text-sm">Find the perfect therapist based on your needs.</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-sage rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-2xl">3</div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Book Session</h4>
+                            <p class="text-slate-600 text-sm">Schedule your first appointment whenever convenient.</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-2xl">4</div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Start Therapy</h4>
+                            <p class="text-slate-600 text-sm">Connect via secure video with your therapist.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section class="section-padding bg-white">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-slate-900 mb-4">What People Are Saying</h2>
+                        <p class="text-xl text-slate-600">Real stories from people who've improved their mental health.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="card-hover p-8 rounded-2xl bg-gray-50 border border-gray-200">
+                            <div class="flex gap-1 mb-4">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="text-slate-600 mb-6 italic">
+                                "MindCare has been transformative for me. My therapist is amazing and the platform is so easy to use. I finally feel heard."
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-primary rounded-full"></div>
+                                <div>
+                                    <p class="font-semibold text-slate-900">Sarah M.</p>
+                                    <p class="text-sm text-slate-500">Verified User</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-hover p-8 rounded-2xl bg-gray-50 border border-gray-200">
+                            <div class="flex gap-1 mb-4">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="text-slate-600 mb-6 italic">
+                                "Affordable, professional, and accessible. This is how mental health care should be. Highly recommend!"
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-lavender rounded-full"></div>
+                                <div>
+                                    <p class="font-semibold text-slate-900">James P.</p>
+                                    <p class="text-sm text-slate-500">Verified User</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-hover p-8 rounded-2xl bg-gray-50 border border-gray-200">
+                            <div class="flex gap-1 mb-4">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="text-slate-600 mb-6 italic">
+                                "The scheduling is so flexible and the therapists are genuinely caring. Worth every penny."
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-sage rounded-full"></div>
+                                <div>
+                                    <p class="font-semibold text-slate-900">Emily R.</p>
+                                    <p class="text-sm text-slate-500">Verified User</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="section-padding gradient-primary text-white">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-4xl font-bold mb-6">Ready to Start Your Journey?</h2>
+                    <p class="text-xl mb-8 opacity-90">
+                        Your first step toward better mental health is just one click away.
+                    </p>
+                    <button onclick="navigateTo('therapists')" class="bg-white text-cyan-600 font-bold px-8 py-4 rounded-lg hover:bg-gray-100 transition">
+                        Find Your Therapist Now
+                    </button>
+                </div>
+            </section>
+        </section>
+
+        <!-- ===== THERAPIST DIRECTORY ===== -->
+        <section id="therapists-page" class="page-section hidden pt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="mb-12">
+                    <h1 class="text-5xl font-bold text-slate-900 mb-4">Find Your Therapist</h1>
+                    <p class="text-xl text-slate-600">Browse our network of licensed mental health professionals.</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-200">
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Specialization</label>
+                            <select id="specialtyFilter" class="input-field" onchange="filterTherapists()">
+                                <option value="">All Specialties</option>
+                                <option value="anxiety">Anxiety Disorders</option>
+                                <option value="depression">Depression</option>
+                                <option value="trauma">Trauma & PTSD</option>
+                                <option value="relationships">Relationship Counseling</option>
+                                <option value="grief">Grief Counseling</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Experience Level</label>
+                            <select id="experienceFilter" class="input-field" onchange="filterTherapists()">
+                                <option value="">All Levels</option>
+                                <option value="5">5+ Years</option>
+                                <option value="10">10+ Years</option>
+                                <option value="15">15+ Years</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Availability</label>
+                            <select id="availabilityFilter" class="input-field" onchange="filterTherapists()">
+                                <option value="">All Times</option>
+                                <option value="morning">Morning</option>
+                                <option value="afternoon">Afternoon</option>
+                                <option value="evening">Evening</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Price Range</label>
+                            <select id="priceFilter" class="input-field" onchange="filterTherapists()">
+                                <option value="">All Prices</option>
+                                <option value="50">Up to $50</option>
+                                <option value="100">Up to $100</option>
+                                <option value="150">Up to $150</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Therapist Grid -->
+                <div id="therapistGrid" class="grid md:grid-cols-3 gap-8">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== APPOINTMENT BOOKING ===== -->
+        <section id="booking-page" class="page-section hidden pt-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <h1 class="text-5xl font-bold text-slate-900 mb-12">Book Your Session</h1>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Booking Form -->
+                    <div class="md:col-span-2">
+                        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
+                            <div class="mb-8">
+                                <h2 class="text-2xl font-bold text-slate-900 mb-4">Session Details</h2>
+                                <label class="block text-sm font-semibold text-slate-900 mb-3">
+                                    Select Date
+                                </label>
+                                <input type="date" id="bookingDate" class="input-field" min="2026-06-20">
+                            </div>
+
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-slate-900 mb-3">
+                                    Select Time
+                                </label>
+                                <div class="grid grid-cols-4 gap-2" id="timeSlots">
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '10:00 AM')">10:00 AM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '11:00 AM')">11:00 AM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '2:00 PM')">2:00 PM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '3:00 PM')">3:00 PM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '4:00 PM')">4:00 PM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '5:00 PM')">5:00 PM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '6:00 PM')">6:00 PM</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectTime(this, '7:00 PM')">7:00 PM</button>
+                                </div>
+                                <input type="hidden" id="selectedTime">
+                            </div>
+
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-slate-900 mb-3">
+                                    Session Duration
+                                </label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectDuration(this, '30')">30 min ($40)</button>
+                                    <button class="p-3 border-2 border-cyan-600 rounded-lg text-sm font-semibold text-cyan-600 bg-cyan-50" onclick="selectDuration(this, '60')">60 min ($80)</button>
+                                    <button class="p-3 border-2 border-gray-200 rounded-lg text-sm font-semibold text-slate-600 hover:border-cyan-600 transition" onclick="selectDuration(this, '90')">90 min ($110)</button>
+                                </div>
+                                <input type="hidden" id="selectedDuration" value="60">
+                            </div>
+
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-slate-900 mb-3">
+                                    Notes (Optional)
+                                </label>
+                                <textarea id="sessionNotes" class="input-field" rows="4" placeholder="Tell us about what you'd like to discuss..."></textarea>
+                            </div>
+
+                            <button onclick="proceedToPayment()" class="w-full btn-primary text-lg">Continue to Payment</button>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="bg-gray-50 rounded-2xl p-8 border border-gray-200 h-fit">
+                        <h3 class="text-xl font-bold text-slate-900 mb-6">Booking Summary</h3>
+                        
+                        <div class="mb-6 pb-6 border-b border-gray-300">
+                            <p class="text-sm text-slate-600 mb-2">Date & Time</p>
+                            <p id="summaryDateTime" class="font-semibold text-slate-900">Select date and time</p>
+                        </div>
+
+                        <div class="mb-6 pb-6 border-b border-gray-300">
+                            <p class="text-sm text-slate-600 mb-2">Duration</p>
+                            <p id="summaryDuration" class="font-semibold text-slate-900">60 minutes</p>
+                        </div>
+
+                        <div class="mb-6 pb-6 border-b border-gray-300">
+                            <p class="text-sm text-slate-600 mb-2">Therapist</p>
+                            <p class="font-semibold text-slate-900">Selected Therapist</p>
+                        </div>
+
+                        <div class="text-2xl font-bold text-slate-900 mb-6">
+                            Total: <span id="summaryPrice">$80</span>
+                        </div>
+
+                        <button onclick="navigateTo('home')" class="w-full btn-secondary">Back to Therapists</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== VIDEO DASHBOARD ===== -->
+        <section id="video-page" class="page-section hidden pt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <h1 class="text-5xl font-bold text-slate-900 mb-12">Your Sessions</h1>
+
+                <!-- Upcoming Sessions -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Upcoming Sessions</h2>
+                    <div class="grid md:grid-cols-3 gap-6" id="upcomingSessions">
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="badge badge-primary">Scheduled</span>
+                                <span class="text-2xl">🟢</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Anxiety Management</h3>
+                            <p class="text-slate-600 mb-4">with Dr. Emma Wilson</p>
+                            <div class="space-y-2 mb-6">
+                                <p class="text-sm text-slate-600"><strong>Date:</strong> June 22, 2026</p>
+                                <p class="text-sm text-slate-600"><strong>Time:</strong> 3:00 PM</p>
+                                <p class="text-sm text-slate-600"><strong>Duration:</strong> 60 minutes</p>
+                            </div>
+                            <button onclick="startSession()" class="w-full btn-primary">Join Session</button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="badge badge-primary">Scheduled</span>
+                                <span class="text-2xl">🟢</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Life Coaching</h3>
+                            <p class="text-slate-600 mb-4">with Coach Marcus Turner</p>
+                            <div class="space-y-2 mb-6">
+                                <p class="text-sm text-slate-600"><strong>Date:</strong> June 25, 2026</p>
+                                <p class="text-sm text-slate-600"><strong>Time:</strong> 2:00 PM</p>
+                                <p class="text-sm text-slate-600"><strong>Duration:</strong> 60 minutes</p>
+                            </div>
+                            <button onclick="startSession()" class="w-full btn-primary">Join Session</button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="badge badge-primary">Scheduled</span>
+                                <span class="text-2xl">🟢</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Depression Support</h3>
+                            <p class="text-slate-600 mb-4">with Dr. Lisa Chen</p>
+                            <div class="space-y-2 mb-6">
+                                <p class="text-sm text-slate-600"><strong>Date:</strong> June 28, 2026</p>
+                                <p class="text-sm text-slate-600"><strong>Time:</strong> 10:00 AM</p>
+                                <p class="text-sm text-slate-600"><strong>Duration:</strong> 60 minutes</p>
+                            </div>
+                            <button onclick="startSession()" class="w-full btn-primary">Join Session</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Room Simulator -->
+                <div id="videoRoom" class="hidden">
+                    <div class="bg-black rounded-2xl overflow-hidden mb-8" style="aspect-ratio: 16/9;">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <span class="text-5xl">📹</span>
+                                </div>
+                                <p class="text-white text-xl font-semibold mb-2">Video Session Active</p>
+                                <p class="text-gray-400">Connected with your therapist</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-4 gap-4 mb-8">
+                        <button class="bg-white rounded-lg p-4 text-center hover:bg-gray-100 transition">
+                            <span class="text-2xl mb-2">🔊</span>
+                            <p class="text-sm font-semibold text-slate-900">Mute/Unmute</p>
+                        </button>
+                        <button class="bg-white rounded-lg p-4 text-center hover:bg-gray-100 transition">
+                            <span class="text-2xl mb-2">📹</span>
+                            <p class="text-sm font-semibold text-slate-900">Toggle Video</p>
+                        </button>
+                        <button class="bg-white rounded-lg p-4 text-center hover:bg-gray-100 transition">
+                            <span class="text-2xl mb-2">📋</span>
+                            <p class="text-sm font-semibold text-slate-900">Notes</p>
+                        </button>
+                        <button onclick="endSession()" class="bg-red-500 rounded-lg p-4 text-center hover:bg-red-600 transition text-white">
+                            <span class="text-2xl mb-2">📞</span>
+                            <p class="text-sm font-semibold">End Session</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Past Sessions -->
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Past Sessions</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-slate-900">Stress Management</h3>
+                                <span class="text-sm font-semibold text-green-600">Completed</span>
+                            </div>
+                            <p class="text-slate-600 mb-3">with Dr. Emma Wilson</p>
+                            <p class="text-sm text-slate-500">June 15, 2026 - 60 minutes</p>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-slate-900">Initial Assessment</h3>
+                                <span class="text-sm font-semibold text-green-600">Completed</span>
+                            </div>
+                            <p class="text-slate-600 mb-3">with Dr. Emma Wilson</p>
+                            <p class="text-sm text-slate-500">June 8, 2026 - 60 minutes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== RESOURCES PAGE ===== -->
+        <section id="resources-page" class="page-section hidden pt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center mb-16">
+                    <h1 class="text-5xl font-bold text-slate-900 mb-4">Mental Health Resources</h1>
+                    <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                        Free educational content to support your mental wellness journey.
+                    </p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex gap-4 mb-12 border-b border-gray-200 overflow-x-auto">
+                    <button onclick="switchTab('articles')" class="tab-btn active px-6 py-3 font-semibold text-slate-900 border-b-2 border-cyan-600 whitespace-nowrap">Articles</button>
+                    <button onclick="switchTab('videos')" class="tab-btn px-6 py-3 font-semibold text-slate-600 hover:text-slate-900 whitespace-nowrap">Videos</button>
+                    <button onclick="switchTab('exercises')" class="tab-btn px-6 py-3 font-semibold text-slate-600 hover:text-slate-900 whitespace-nowrap">Exercises</button>
+                    <button onclick="switchTab('emergency')" class="tab-btn px-6 py-3 font-semibold text-slate-600 hover:text-slate-900 whitespace-nowrap">Emergency</button>
+                </div>
+
+                <!-- Articles Tab -->
+                <div id="articles-tab" class="tab-content active">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-48 bg-gradient-to-br from-cyan-100 to-cyan-50"></div>
+                            <div class="p-6">
+                                <p class="text-sm text-cyan-600 font-semibold mb-2">ANXIETY</p>
+                                <h3 class="text-xl font-bold text-slate-900 mb-3">Understanding Anxiety: Causes and Coping Strategies</h3>
+                                <p class="text-slate-600 mb-4">Learn about the different types of anxiety disorders and practical techniques to manage symptoms.</p>
+                                <button class="text-cyan-600 font-semibold hover:text-cyan-700">Read Article →</button>
+                            </div>
+                        </div>
+
+                        <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-48 bg-gradient-to-br from-purple-100 to-purple-50"></div>
+                            <div class="p-6">
+                                <p class="text-sm text-purple-600 font-semibold mb-2">DEPRESSION</p>
+                                <h3 class="text-xl font-bold text-slate-900 mb-3">Recognizing Depression and Seeking Help</h3>
+                                <p class="text-slate-600 mb-4">A comprehensive guide to understanding depression symptoms and treatment options available.</p>
+                                <button class="text-purple-600 font-semibold hover:text-purple-700">Read Article →</button>
+                            </div>
+                        </div>
+
+                        <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-48 bg-gradient-to-br from-green-100 to-green-50"></div>
+                            <div class="p-6">
+                                <p class="text-sm text-green-600 font-semibold mb-2">WELLNESS</p>
+                                <h3 class="text-xl font-bold text-slate-900 mb-3">Building Healthy Habits for Mental Wellness</h3>
+                                <p class="text-slate-600 mb-4">Discover evidence-based strategies to improve sleep, nutrition, and exercise for better mental health.</p>
+                                <button class="text-green-600 font-semibold hover:text-green-700">Read Article →</button>
+                            </div>
+                        </div>
+
+                        <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-48 bg-gradient-to-br from-pink-100 to-pink-50"></div>
+                            <div class="p-6">
+                                <p class="text-sm text-pink-600 font-semibold mb-2">RELATIONSHIPS</p>
+                                <h3 class="text-xl font-bold text-slate-900 mb-3">Improving Communication in Relationships</h3>
+                                <p class="text-slate-600 mb-4">Learn effective communication skills to strengthen your relationships and resolve conflicts.</p>
+                                <button class="text-pink-600 font-semibold hover:text-pink-700">Read Article →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Videos Tab -->
+                <div id="videos-tab" class="tab-content hidden">
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="card-hover rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-40 bg-black flex items-center justify-center">
+                                <span class="text-4xl">▶️</span>
+                            </div>
+                            <div class="p-6 bg-white">
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">10-Minute Meditation Guide</h3>
+                                <p class="text-slate-600 text-sm">Learn a simple meditation technique.</p>
+                                <p class="text-xs text-slate-500 mt-3">5 min video</p>
+                            </div>
+                        </div>
+
+                        <div class="card-hover rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-40 bg-black flex items-center justify-center">
+                                <span class="text-4xl">▶️</span>
+                            </div>
+                            <div class="p-6 bg-white">
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">Breathing Exercises for Stress</h3>
+                                <p class="text-slate-600 text-sm">Master calming breathing techniques.</p>
+                                <p class="text-xs text-slate-500 mt-3">7 min video</p>
+                            </div>
+                        </div>
+
+                        <div class="card-hover rounded-2xl overflow-hidden border border-gray-200">
+                            <div class="h-40 bg-black flex items-center justify-center">
+                                <span class="text-4xl">▶️</span>
+                            </div>
+                            <div class="p-6 bg-white">
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">Sleep Hygiene Tips</h3>
+                                <p class="text-slate-600 text-sm">Improve your sleep quality tonight.</p>
+                                <p class="text-xs text-slate-500 mt-3">6 min video</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercises Tab -->
+                <div id="exercises-tab" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-2xl p-8 border border-gray-200">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-4">Grounding Technique: 5-4-3-2-1</h3>
+                            <div class="space-y-4 mb-6">
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">5</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Name 5 things you see</p>
+                                        <p class="text-slate-600 text-sm">Look around and notice details.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">4</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Name 4 things you can touch</p>
+                                        <p class="text-slate-600 text-sm">Feel textures around you.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">3</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Name 3 things you hear</p>
+                                        <p class="text-slate-600 text-sm">Listen to sounds around you.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">2</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Name 2 things you smell</p>
+                                        <p class="text-slate-600 text-sm">Notice any scents.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">1</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Name 1 thing you taste</p>
+                                        <p class="text-slate-600 text-sm">Notice any flavors.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 bg-blue-50 p-4 rounded-lg">This exercise helps ground you in the present moment when experiencing anxiety or panic.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-8 border border-gray-200">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-4">Progressive Muscle Relaxation</h3>
+                            <div class="space-y-4 mb-6">
+                                <div class="pb-4 border-b border-gray-200">
+                                    <p class="font-semibold text-slate-900">1. Feet and Legs</p>
+                                    <p class="text-slate-600 text-sm">Tense your feet for 5 seconds, then release.</p>
+                                </div>
+                                <div class="pb-4 border-b border-gray-200">
+                                    <p class="font-semibold text-slate-900">2. Abdomen</p>
+                                    <p class="text-slate-600 text-sm">Tighten your stomach muscles, then relax.</p>
+                                </div>
+                                <div class="pb-4 border-b border-gray-200">
+                                    <p class="font-semibold text-slate-900">3. Chest and Arms</p>
+                                    <p class="text-slate-600 text-sm">Clench your fists and tense your arms, then release.</p>
+                                </div>
+                                <div class="pb-4 border-b border-gray-200">
+                                    <p class="font-semibold text-slate-900">4. Neck and Face</p>
+                                    <p class="text-slate-600 text-sm">Tense your face muscles, then relax completely.</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-slate-900">5. Full Body</p>
+                                    <p class="text-slate-600 text-sm">Tense everything at once, then release for deep relaxation.</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 bg-purple-50 p-4 rounded-lg">Repeat each group 2-3 times. Best done in a quiet, comfortable place.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Tab -->
+                <div id="emergency-tab" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-red-50 rounded-2xl p-8 border-2 border-red-200">
+                            <h3 class="text-2xl font-bold text-red-900 mb-4">Crisis Resources</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-semibold text-red-900">National Suicide Prevention Lifeline</p>
+                                    <p class="text-2xl font-bold text-red-600 my-2">988</p>
+                                    <p class="text-red-800 text-sm">Free, confidential support 24/7. Call or text "HELLO" to 741741.</p>
+                                </div>
+                                <div class="border-t border-red-200 pt-4">
+                                    <p class="font-semibold text-red-900">Crisis Text Line</p>
+                                    <p class="text-red-600 font-mono text-lg my-2">Text HOME to 741741</p>
+                                    <p class="text-red-800 text-sm">Free crisis counseling via text message.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-2xl p-8 border-2 border-blue-200">
+                            <h3 class="text-2xl font-bold text-blue-900 mb-4">When to Seek Emergency Help</h3>
+                            <ul class="space-y-3 text-blue-900">
+                                <li class="flex gap-3">
+                                    <span class="font-bold flex-shrink-0">•</span>
+                                    <span>Thoughts of harming yourself or others</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold flex-shrink-0">•</span>
+                                    <span>Severe panic or anxiety attacks</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold flex-shrink-0">•</span>
+                                    <span>Substance overdose</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold flex-shrink-0">•</span>
+                                    <span>Severe allergic reactions</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold flex-shrink-0">•</span>
+                                    <span>Loss of consciousness</span>
+                                </li>
+                            </ul>
+                            <p class="text-blue-800 font-semibold mt-6">If experiencing any of these, call 911 or go to nearest ER.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PRICING PAGE ===== -->
+        <section id="pricing-page" class="page-section hidden pt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center mb-16">
+                    <h1 class="text-5xl font-bold text-slate-900 mb-4">Simple, Transparent Pricing</h1>
+                    <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                        Choose the plan that works best for you. Cancel anytime.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <!-- Starter Plan -->
+                    <div class="rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition card-hover">
+                        <div class="p-8 bg-gray-50">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
+                            <p class="text-slate-600 mb-6">Perfect for getting started</p>
+                            <div class="text-5xl font-bold text-slate-900 mb-2">$0</div>
+                            <p class="text-slate-600 mb-8">Forever free</p>
+                            <button class="w-full btn-secondary">Get Started</button>
+                        </div>
+                        <div class="p-8">
+                            <p class="font-semibold text-slate-900 mb-4">What's Included:</p>
+                            <ul class="space-y-3">
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Browse therapist profiles</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Mental health resources</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Self-help exercises</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-gray-300 font-bold">✗</span>
+                                    <span class="text-slate-500 line-through">Therapy sessions</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Professional Plan (Popular) -->
+                    <div class="rounded-2xl border-2 border-cyan-600 overflow-hidden shadow-xl card-hover relative">
+                        <div class="absolute top-0 left-0 right-0 bg-gradient-primary text-white text-center py-2 font-semibold">
+                            Most Popular
+                        </div>
+                        <div class="p-8 bg-cyan-50 pt-16">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-2">Professional</h3>
+                            <p class="text-slate-600 mb-6">For ongoing support</p>
+                            <div class="text-5xl font-bold text-slate-900 mb-2">$80</div>
+                            <p class="text-slate-600 mb-8">per session (60 min)</p>
+                            <button class="w-full btn-primary">Start Free Trial</button>
+                        </div>
+                        <div class="p-8 bg-white">
+                            <p class="font-semibold text-slate-900 mb-4">Everything in Starter, plus:</p>
+                            <ul class="space-y-3">
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Unlimited therapy sessions</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Flexible scheduling</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Session notes & history</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">24/7 support chat</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Prescriptions (if needed)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Premium Plan -->
+                    <div class="rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition card-hover">
+                        <div class="p-8 bg-gray-50">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-2">Premium</h3>
+                            <p class="text-slate-600 mb-6">Comprehensive care</p>
+                            <div class="text-5xl font-bold text-slate-900 mb-2">$150</div>
+                            <p class="text-slate-600 mb-8">per month</p>
+                            <button class="w-full btn-secondary">Contact Sales</button>
+                        </div>
+                        <div class="p-8">
+                            <p class="font-semibold text-slate-900 mb-4">Everything in Professional, plus:</p>
+                            <ul class="space-y-3">
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Dedicated therapist</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Weekly sessions included</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Treatment plan management</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Medication management</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-slate-600">Priority support</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-8 text-center">Frequently Asked Questions</h2>
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                            <h4 class="text-lg font-bold text-slate-900 mb-3">Can I change plans anytime?</h4>
+                            <p class="text-slate-600">Yes! You can upgrade, downgrade, or cancel your plan anytime without penalties.</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                            <h4 class="text-lg font-bold text-slate-900 mb-3">What payment methods do you accept?</h4>
+                            <p class="text-slate-600">We accept all major credit cards, debit cards, and digital payment methods through Stripe.</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                            <h4 class="text-lg font-bold text-slate-900 mb-3">Is insurance accepted?</h4>
+                            <p class="text-slate-600">Yes, we work with many insurance providers. Contact our team for details about your specific plan.</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                            <h4 class="text-lg font-bold text-slate-900 mb-3">What if I'm not satisfied?</h4>
+                            <p class="text-slate-600">If you're not satisfied, we offer a 100% money-back guarantee for your first month.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT PAGE ===== -->
+        <section id="contact-page" class="page-section hidden pt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center mb-16">
+                    <h1 class="text-5xl font-bold text-slate-900 mb-4">Get in Touch</h1>
+                    <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                        Have questions? We'd love to hear from you.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 text-center card-hover">
+                        <div class="text-4xl mb-4">📧</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Email</h3>
+                        <p class="text-slate-600 mb-2">hello@mindcare.com</p>
+                        <p class="text-sm text-slate-500">We respond within 24 hours</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 text-center card-hover">
+                        <div class="text-4xl mb-4">📞</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Phone</h3>
+                        <p class="text-slate-600 mb-2">1-800-MINDCARE</p>
+                        <p class="text-sm text-slate-500">Mon-Fri, 9AM-6PM EST</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 text-center card-hover">
+                        <div class="text-4xl mb-4">💬</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Chat</h3>
+                        <p class="text-slate-600 mb-2">Live chat available</p>
+                        <p class="text-sm text-slate-500">24/7 support</p>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Send us a Message</h2>
+                        
+                        <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-slate-900 mb-2">Name</label>
+                                <input type="text" id="contactName" class="input-field" placeholder="Your name" required>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-slate-900 mb-2">Email</label>
+                                <input type="email" id="contactEmail" class="input-field" placeholder="your@email.com" required>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-slate-900 mb-2">Subject</label>
+                                <select id="contactSubject" class="input-field" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Support</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="feedback">Feedback</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-slate-900 mb-2">Message</label>
+                                <textarea id="contactMessage" class="input-field" rows="6" placeholder="Tell us more..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full btn-primary text-lg">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-900">Welcome to MindCare</h2>
+                <button onclick="toggleAuthModal()" class="text-slate-600 hover:text-slate-900 text-2xl">×</button>
+            </div>
+
+            <div class="flex gap-4 mb-6">
+                <button onclick="switchAuthTab('login')" id="loginTabBtn" class="flex-1 py-2 px-4 font-semibold text-white bg-cyan-600 rounded-lg">Login</button>
+                <button onclick="switchAuthTab('signup')" id="signupTabBtn" class="flex-1 py-2 px-4 font-semibold text-slate-600 bg-gray-100 rounded-lg hover:bg-gray-200">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Email</label>
+                    <input type="email" id="loginEmail" class="input-field" placeholder="your@email.com" required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Password</label>
+                    <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="w-full btn-primary">Login</button>
+
+                <p class="text-center text-slate-600 mt-4 text-sm">
+                    Don't have an account? 
+                    <button type="button" onclick="switchAuthTab('signup')" class="text-cyan-600 font-semibold hover:text-cyan-700">Sign up</button>
+                </p>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" style="display: none;" onsubmit="handleSignup(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Full Name</label>
+                    <input type="text" id="signupName" class="input-field" placeholder="John Doe" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Email</label>
+                    <input type="email" id="signupEmail" class="input-field" placeholder="your@email.com" required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Password</label>
+                    <input type="password" id="signupPassword" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" id="termsAgree" class="w-4 h-4" required>
+                        <span class="text-sm text-slate-600">I agree to the <a href="#" class="text-cyan-600 hover:text-cyan-700">Terms of Service</a> and <a href="#" class="text-cyan-600 hover:text-cyan-700">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full btn-primary">Create Account</button>
+
+                <p class="text-center text-slate-600 mt-4 text-sm">
+                    Already have an account? 
+                    <button type="button" onclick="switchAuthTab('login')" class="text-cyan-600 font-semibold hover:text-cyan-700">Login</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-900">Complete Payment</h2>
+                <button onclick="closePaymentModal()" class="text-slate-600 hover:text-slate-900 text-2xl">×</button>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-200">
+                <div class="flex justify-between mb-3">
+                    <span class="text-slate-600">Session Duration</span>
+                    <span id="paymentDuration" class="font-semibold text-slate-900">60 minutes</span>
+                </div>
+                <div class="flex justify-between border-t border-gray-300 pt-3">
+                    <span class="font-bold text-slate-900">Total Amount</span>
+                    <span id="paymentAmount" class="text-2xl font-bold text-cyan-600">$80.00</span>
+                </div>
+            </div>
+
+            <form id="paymentForm" onsubmit="handlePayment(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Card Number</label>
+                    <input type="text" class="input-field" placeholder="4532 1234 5678 9010" maxlength="19" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-900 mb-2">Expiry Date</label>
+                        <input type="text" class="input-field" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-900 mb-2">CVC</label>
+                        <input type="text" class="input-field" placeholder="123" maxlength="3" required>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Cardholder Name</label>
+                    <input type="text" class="input-field" placeholder="John Doe" required>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-blue-900">
+                        <strong>Note:</strong> This is a demo. In production, use Stripe.js for secure payment processing.
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full btn-primary text-lg">Pay $80.00</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ===== GLOBAL STATE =====
+        let currentUser = null;
+        let selectedTherapist = null;
+        let filteredTherapists = [];
+
+        // Therapist Database
+        const therapists = [
+            {
+                id: 1,
+                name: "Dr. Emma Wilson",
+                specialty: "anxiety",
+                experience: 12,
+                availability: "afternoon",
+                price: 80,
+                rating: 4.9,
+                bio: "Specializes in anxiety disorders with CBT approach",
+                image: "👩‍⚕️"
+            },
+            {
+                id: 2,
+                name: "Dr. Marcus Johnson",
+                specialty: "depression",
+                experience: 15,
+                availability: "evening",
+                price: 100,
+                rating: 4.8,
+                bio: "Expert in depression treatment and recovery",
+                image: "👨‍⚕️"
+            },
+            {
+                id: 3,
+                name: "Dr. Lisa Chen",
+                specialty: "trauma",
+                experience: 18,
+                availability: "morning",
+                price: 120,
+                rating: 5.0,
+                bio: "Trauma-informed care specialist",
+                image: "👩‍⚕️"
+            },
+            {
+                id: 4,
+                name: "Sarah Thompson",
+                specialty: "relationships",
+                experience: 8,
+                availability: "afternoon",
+                price: 60,
+                rating: 4.7,
+                bio: "Relationship counselor and couples therapist",
+                image: "👩‍⚕️"
+            },
+            {
+                id: 5,
+                name: "Coach Marcus Turner",
+                specialty: "grief",
+                experience: 10,
+                availability: "evening",
+                price: 70,
+                rating: 4.9,
+                bio: "Grief and loss counseling specialist",
+                image: "👨‍⚕️"
+            },
+            {
+                id: 6,
+                name: "Dr. Patricia Anderson",
+                specialty: "anxiety",
+                experience: 14,
+                availability: "morning",
+                price: 90,
+                rating: 4.8,
+                bio: "Anxiety and panic disorder treatment",
+                image: "👩‍⚕️"
+            }
+        ];
+
+        // ===== NAVIGATION =====
+        function navigateTo(page) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.classList.add('hidden'));
+
+            const targetPage = document.getElementById(page + '-page');
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // ===== AUTHENTICATION =====
+        function toggleAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.toggle('active');
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginBtn = document.getElementById('loginTabBtn');
+            const signupBtn = document.getElementById('signupTabBtn');
+
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                loginBtn.classList.add('bg-cyan-600', 'text-white');
+                loginBtn.classList.remove('bg-gray-100', 'text-slate-600');
+                signupBtn.classList.add('bg-gray-100', 'text-slate-600');
+                signupBtn.classList.remove('bg-cyan-600', 'text-white');
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                signupBtn.classList.add('bg-cyan-600', 'text-white');
+                signupBtn.classList.remove('bg-gray-100', 'text-slate-600');
+                loginBtn.classList.add('bg-gray-100', 'text-slate-600');
+                loginBtn.classList.remove('bg-cyan-600', 'text-white');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            currentUser = { email, name: 'User' };
+            document.getElementById('authBtn').textContent = '👤 Profile';
+            toggleAuthModal();
+            alert('Welcome back! You are now logged in.');
+            loadTherapists();
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            currentUser = { email, name };
+            document.getElementById('authBtn').textContent = '👤 Profile';
+            toggleAuthModal();
+            alert('Account created successfully!');
+            loadTherapists();
+        }
+
+        // ===== THERAPIST DIRECTORY =====
+        function loadTherapists() {
+            filteredTherapists = [...therapists];
+            renderTherapists();
+        }
+
+        function filterTherapists() {
+            const specialty = document.getElementById('specialtyFilter').value;
+            const experience = parseInt(document.getElementById('experienceFilter').value) || 0;
+            const availability = document.getElementById('availabilityFilter').value;
+            const price = parseInt(document.getElementById('priceFilter').value) || Infinity;
+
+            filteredTherapists = therapists.filter(t => {
+                return (!specialty || t.specialty === specialty) &&
+                       (t.experience >= experience || experience === 0) &&
+                       (!availability || t.availability === availability) &&
+                       (t.price <= price || price === Infinity);
+            });
+
+            renderTherapists();
+        }
+
+        function renderTherapists() {
+            const grid = document.getElementById('therapistGrid');
+            grid.innerHTML = '';
+
+            if (filteredTherapists.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-xl text-slate-600">No therapists match your filters. Try adjusting them.</p></div>';
+                return;
+            }
+
+            filteredTherapists.forEach(therapist => {
+                const card = document.createElement('div');
+                card.className = 'card-hover bg-white rounded-2xl border border-gray-200 p-6 shadow-md overflow-hidden';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-5xl">${therapist.image}</div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-500">${therapist.rating}★</div>
+                            <p class="text-xs text-slate-500">(${Math.floor(Math.random() * 50 + 10)} reviews)</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-slate-900 mb-1">${therapist.name}</h3>
+                    <div class="badge badge-primary mb-4">${therapist.specialty.charAt(0).toUpperCase() + therapist.specialty.slice(1)}</div>
+                    
+                    <p class="text-slate-600 text-sm mb-4">${therapist.bio}</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-6 text-sm">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-slate-600 text-xs">Experience</p>
+                            <p class="font-bold text-slate-900">${therapist.experience} years</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-slate-600 text-xs">Session Price</p>
+                            <p class="font-bold text-slate-900">$${therapist.price}</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 mb-4">Available: ${therapist.availability}</p>
+                    
+                    <button onclick="selectTherapistAndBook(${therapist.id})" class="w-full btn-primary">View Profile & Book</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTherapistAndBook(therapistId) {
+            selectedTherapist = therapists.find(t => t.id === therapistId);
+            if (selectedTherapist) {
+                navigateTo('booking');
+            }
+        }
+
+        // ===== APPOINTMENT BOOKING =====
+        function selectTime(button, time) {
+            document.querySelectorAll('#timeSlots button').forEach(btn => {
+                btn.classList.remove('border-cyan-600', 'bg-cyan-50', 'text-cyan-600');
+                btn.classList.add('border-gray-200', 'text-slate-600');
+            });
+            button.classList.add('border-cyan-600', 'bg-cyan-50', 'text-cyan-600');
+            document.getElementById('selectedTime').value = time;
+            updateBookingSummary();
+        }
+
+        function selectDuration(button, duration) {
+            document.querySelectorAll('#timeSlots + div button').forEach(btn => {
+                btn.classList.remove('border-cyan-600', 'bg-cyan-50', 'text-cyan-600');
+                btn.classList.add('border-gray-200', 'text-slate-600');
+            });
+            button.classList.add('border-cyan-600', 'bg-cyan-50', 'text-cyan-600');
+            document.getElementById('selectedDuration').value = duration;
+            updateBookingSummary();
+        }
+
+        function updateBookingSummary() {
+            const date = document.getElementById('bookingDate').value;
+            const time = document.getElementById('selectedTime').value;
+            const duration = document.getElementById('selectedDuration').value;
+            
+            const durationText = duration === '30' ? '30 minutes' : duration === '60' ? '60 minutes' : '90 minutes';
+            const priceMap = { '30': 40, '60': 80, '90': 110 };
+            const price = priceMap[duration] || 80;
+
+            document.getElementById('summaryDateTime').textContent = date && time ? `${date} at ${time}` : 'Select date and time';
+            document.getElementById('summaryDuration').textContent = durationText;
+            document.getElementById('summaryPrice').textContent = `$${price}`;
+        }
+
+        function proceedToPayment() {
+            const date = document.getElementById('bookingDate').value;
+            const time = document.getElementById('selectedTime').value;
+
+            if (!date || !time) {
+                alert('Please select both date and time.');
+                return;
+            }
+
+            const duration = document.getElementById('selectedDuration').value;
+            const priceMap = { '30': 40, '60': 80, '90': 110 };
+            const price = priceMap[duration];
+
+            document.getElementById('paymentDuration').textContent = duration + ' minutes';
+            document.getElementById('paymentAmount').textContent = '$' + price.toFixed(2);
+
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        function handlePayment(event) {
+            event.preventDefault();
+            alert('Payment processed successfully! Your appointment is confirmed. Check your dashboard for session details.');
+            closePaymentModal();
+            navigateTo('video');
+        }
+
+        // ===== VIDEO SESSIONS =====
+        function startSession() {
+            const videoRoom = document.getElementById('videoRoom');
+            videoRoom.classList.remove('hidden');
+            document.querySelector('#video-page > div').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function endSession() {
+            const videoRoom = document.getElementById('videoRoom');
+            videoRoom.classList.add('hidden');
+            alert('Session ended. Thank you for the session. Your therapist will send notes shortly.');
+        }
+
+        // ===== RESOURCES =====
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const btns = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            btns.forEach(b => b.classList.remove('text-slate-900', 'border-b-2', 'border-cyan-600'));
+            btns.forEach(b => b.classList.add('text-slate-600'));
+
+            document.getElementById(tab + '-tab').classList.add('active');
+            event.target.classList.add('text-slate-900', 'border-b-2', 'border-cyan-600');
+        }
+
+        // ===== CONTACT FORM =====
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('contactName').value;
+            alert(`Thank you, ${name}! We'll get back to you soon.`);
+            document.getElementById('contactForm').reset();
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTherapists();
+            navigateTo('home');
+        });
+
+        // Close modals on outside click
+        document.getElementById('authModal').addEventListener('click', (e) => {
+            if (e.target.id === 'authModal') toggleAuthModal();
+        });
+
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target.id === 'paymentModal') closePaymentModal();
+        });
+    </script>
+</body>
+</html>
